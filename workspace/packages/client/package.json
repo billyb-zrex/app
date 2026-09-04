@@ -101,7 +101,7 @@
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "start-staging": "env-cmd --verbose -e staging -r ../env.json  react-scripts start",
     "build-staging": "env-cmd --verbose -e staging -r ../env.json react-scripts build",
-    "build-prod": "env-cmd --verbose -e prod -r ../env.json react-scripts build",
+    "build-prod": "react-scripts build",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test"
   },
