@@ -15,7 +15,7 @@ const DSN_KEY_CLIENT = 'https://fb9d18e316c749079ad14a6d6fa70f7b@o45051131776204
 const DSN_KEY_EXT = 'https://62b1df8a61314adfbf35374d53498a43@o4505113177620480.ingest.sentry.io/4505114458062848';
 
 export const init = (target: Target, version: string) => {
-  if (!isProdEnv()) {
+  if (!isProdEnv() || process.env.REACT_APP_DISABLE_TELEMETRY === 'true') {
     return;
   }
 
@@ -72,13 +72,13 @@ export const init = (target: Target, version: string) => {
 };
 
 export const sentryTxReport = (
-  transaction: Transaction,
+  transaction: Transaction | undefined,
   measureName: string,
   measureValue: number,
   measureUnit: string,
   shouldFinish = true
 ) => {
-  if (!isProdEnv()) {
+  if (!isProdEnv() || process.env.REACT_APP_DISABLE_TELEMETRY === 'true' || !transaction) {
     return;
   }
 
@@ -103,3 +103,4 @@ export function sentryCaptureException(error: Error, data?: string, filename: st
     captureException(error);
   });
 }
+

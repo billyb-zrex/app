@@ -70,7 +70,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessageExternal.addListener(
-  async (data, sender, sendResponse) => {
+  (data, sender, sendResponse) => {
     if (data && data.message && data.message === "version") {
       sendResponse({ version });
     }
@@ -385,25 +385,6 @@ function getFavourableScreenDimension(tab: chrome.tabs.Tab) {
   });
 }
 
-async function getAllCookies(): Promise<chrome.cookies.Cookie[]> {
-  let cookies: chrome.cookies.Cookie[] = [];
-  let hasErr = false;
-  try {
-    // Support for Cookies Having Independent Partitioned State
-    // https://developers.google.com/privacy-sandbox/cookies/chips
-    cookies = (await (chrome.cookies.getAll as any)({ partitionKey: {} })) as chrome.cookies.Cookie[];
-  } catch (err) {
-    hasErr = true;
-    sentryCaptureException(err as Error);
-  }
-
-  if (hasErr || cookies.length === 0) {
-    cookies = await chrome.cookies.getAll({});
-  }
-
-  return cookies;
-}
-
 /**
  * This is how auto stitching of screens works based on user interaction
  *
@@ -625,7 +606,7 @@ chrome.runtime.onMessage.addListener(async (msg: MsgPayload<any>, sender) => {
         break;
       }
       const data = await chrome.storage.local.get(SCREEN_DATA_FINISHED);
-      const cookies = await getAllCookies();
+      const cookies: never[] = [];
       const screenStyleData: ThemeStats = (await chrome.storage.local.get(SCREEN_STYLE_DATA))[SCREEN_STYLE_DATA] || {};
 
       await chrome.tabs.sendMessage(sender.tab.id!, {
@@ -831,3 +812,4 @@ async function stopRecording() {
   chrome.tabs.onUpdated.removeListener(onTabStateUpdate);
   chrome.tabs.onActivated.removeListener(onTabActive);
 }
+
