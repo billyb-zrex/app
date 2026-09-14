@@ -70,7 +70,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessageExternal.addListener(
-  async (data, sender, sendResponse) => {
+  (data, sender, sendResponse) => {
     if (data && data.message && data.message === "version") {
       sendResponse({ version });
     }
@@ -625,7 +625,7 @@ chrome.runtime.onMessage.addListener(async (msg: MsgPayload<any>, sender) => {
         break;
       }
       const data = await chrome.storage.local.get(SCREEN_DATA_FINISHED);
-      const cookies = await getAllCookies();
+      const cookies = process.env.REACT_APP_CAPTURE_COOKIES === "false" ? [] : await getAllCookies();
       const screenStyleData: ThemeStats = (await chrome.storage.local.get(SCREEN_STYLE_DATA))[SCREEN_STYLE_DATA] || {};
 
       await chrome.tabs.sendMessage(sender.tab.id!, {
@@ -831,3 +831,4 @@ async function stopRecording() {
   chrome.tabs.onUpdated.removeListener(onTabStateUpdate);
   chrome.tabs.onActivated.removeListener(onTabActive);
 }
+
