@@ -72,13 +72,13 @@ export const init = (target: Target, version: string) => {
 };
 
 export const sentryTxReport = (
-  transaction: Transaction,
+  transaction: Transaction | undefined,
   measureName: string,
   measureValue: number,
   measureUnit: string,
   shouldFinish = true
 ) => {
-  if (!isProdEnv()) {
+  if (!isProdEnv() || process.env.REACT_APP_DISABLE_TELEMETRY === 'true' || !transaction) {
     return;
   }
 
