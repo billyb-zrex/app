@@ -7,7 +7,7 @@ Deploy this repository as a **Static Site** component.
 - Branch: `codex/digitalocean-core` (change to `develop` after merging)
 - Source directory: `/workspace`
 - Build command: `yarn workspace @fable/client build-prod`
-- Output directory: `/workspace/packages/client/build`
+- Output directory: `packages/client/build` (relative to the source directory)
 - Catch-all document: `index.html`
 - Custom domain: `demo.zrexsolutions.com`
 
@@ -43,3 +43,5 @@ its AWS dependencies are deployed.
 The Chrome capture extension must be built and distributed separately before
 recording from the browser will work. Set `REACT_APP_EXTENSION_ID` to that
 extension's ID when it is available.
+
+The `build-prod` script builds `@fable/common` before the client. Optional product analytics stay disabled when their keys are empty. Public Spaces uploads send `x-amz-acl` only when requested by the signed upload URL; private upload URLs do not request it.
