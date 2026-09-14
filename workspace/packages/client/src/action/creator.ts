@@ -131,7 +131,7 @@ import {
   OpenAIVoices,
 } from '../types';
 import ActionType from './type';
-import { uploadImageAsBinary } from '../upload-media-to-aws';
+import { uploadImageAsBinary, signedUploadHeaders } from '../upload-media-to-aws';
 import { FABLE_LOCAL_STORAGE_ORG_ID_KEY } from '../constants';
 import { FeatureForPlan, FeaturePerPlan } from '../plans';
 import { createBatches, getAnnotationsPerScreen, getDemoStateFromTourData, handleLlmApi, handleRaiseDeferredErrorWithAnnonymousId, datasetQueryParser, isValidStrWithAlphaNumericValues, mapPlanIdAndIntervals, updateTourDataFromLLMRespItems, updateTourDataWithThemeContent, ParsedQueryResult, processVarMap, updateTourDataToAddVoiceOver, isMediaAnnotation, getAllOrderedAnnotationsInTour } from '../utils';
@@ -2170,7 +2170,7 @@ async function uploadDataToDHConfigJSON(
       method: 'PUT',
       body: JSON.stringify(data),
       headers: {
-        'Content-Type': 'application/json',
+        ...signedUploadHeaders(datauploadUrl, 'application/json'),
         'Cache-Control': 'max-age=0'
       }
     });
@@ -3033,7 +3033,7 @@ async function uploadDatasetToPresignedUrl(presignedUrl: string, config: Dataset
     method: 'PUT',
     body: JSON.stringify(config),
     headers: {
-      'Content-Type': 'application/json',
+      ...signedUploadHeaders(presignedUrl, 'application/json'),
       'Cache-Control': 'max-age=0'
     }
   });
@@ -3263,3 +3263,4 @@ export function recreateUsingAI(
     }
   };
 }
+
