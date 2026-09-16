@@ -1283,6 +1283,10 @@ class CreateTour extends React.PureComponent<IProps, IOwnStateProps> {
                   <Button
                     iconPlacement="left"
                     onClick={() => {
+                      if (process.env.REACT_APP_SELF_HOSTED_CORE === 'true') {
+                        this.setState({ saveType: 'new_tour' }, this.handleFinishCreatingDemoManually);
+                        return;
+                      }
                       this.setState({
                         currentDisplayState: DisplayState.ShowAddProductDescriptionOptions,
                         prevDisplayState: DisplayState.ShowTourCreationOptions,
@@ -1304,7 +1308,7 @@ class CreateTour extends React.PureComponent<IProps, IOwnStateProps> {
                         intent="secondary"
                         onClick={() => {
                           this.setState(prevState => {
-                            const creationMode: 'ai' | 'manual' = 'ai';
+                            const creationMode: 'ai' | 'manual' = process.env.REACT_APP_SELF_HOSTED_CORE === 'true' ? 'manual' : 'ai';
                             return {
                               currentDisplayState: DisplayState.ShowAddExistingTourOptions,
                               prevDisplayState: DisplayState.ShowTourCreationOptions,
