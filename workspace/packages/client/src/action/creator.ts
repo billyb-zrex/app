@@ -110,6 +110,7 @@ import {
   processDatasetConfig,
   preprocessEditTextsToReplacePersVars,
 } from '../entity-processor';
+import { normalizeGlobalConfig, getCoreFeatureDefaults } from '../core-defaults';
 import { TState } from '../reducer';
 import {
   AllEdits,
@@ -909,7 +910,7 @@ export function getAllTours(shouldRefreshIfPresent = true, fetchUpdatedTours = f
       let gOptsData = state.globalConfig;
       if (!gOptsData) {
         const respGOpts = await api<null, ApiResp<RespGlobalOpts>>('/gopts', { auth: true });
-        gOptsData = respGOpts.data.globalOpts;
+        gOptsData = normalizeGlobalConfig(respGOpts.data.globalOpts);
       }
 
       const tours = data.data.map((d: RespDemoEntity) => processRawTourData(d, getState().default.commonConfig!, gOptsData!))
@@ -1580,7 +1581,7 @@ export function getGlobalConfig() {
 
     const data = await api<null, ApiResp<RespGlobalOpts>>('/gopts', { auth: true });
 
-    const config: IGlobalConfig = data.data.globalOpts;
+    const config: IGlobalConfig = normalizeGlobalConfig(data.data.globalOpts);
 
     dispatch({
       type: ActionType.SET_GLOBAL_CONFIG,
@@ -1822,7 +1823,10 @@ export function getFeaturePlan(subs: RespSubscription) {
     }
 
     const data = await api<null, ApiResp<FeaturePerPlan>>('/featureplanmtx');
-    const featurePerPlan = (data.data ? data.data : {});
+    const featurePerPlan = {
+      ...(process.env.REACT_APP_SELF_HOSTED_CORE === 'true' ? getCoreFeatureDefaults() : {}),
+      ...(data.data || {}),
+    };
     const state = getState();
     const org = state.default.org;
     const featurePlanForOrg = mergeAndTransformFeaturePerPlan(featurePerPlan, org && org.info && org.info.bet && org.info.bet.featureGateOverride, plan);
