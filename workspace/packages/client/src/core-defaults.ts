@@ -12,8 +12,8 @@ export function normalizeGlobalConfig(value: Partial<IGlobalConfig> | null | und
 export function getCoreFeatureDefaults(): FeaturePerPlan {
   const features: FeaturePerPlan = {};
   const enabled = ['no_of_demos', 'no_of_creator', 'custom_demo_loader', 'custom_lead_form',
-    'no_watermark', 'multi_annontation', 'modules'];
-  const disabled = ['custom_domain', 'dataset', 'demo_hub', 'aggregate_analytics'];
+    'no_watermark', 'multi_annontation', 'modules', 'dataset', 'demo_hub'];
+  const disabled = ['custom_domain', 'aggregate_analytics'];
   for (const key of [...enabled, ...disabled]) {
     features[key] = {
       plans: [{ plan: '*', test: Test.SWITCH, value: enabled.includes(key) ? 'on' : 'off' }],
@@ -21,6 +21,11 @@ export function getCoreFeatureDefaults(): FeaturePerPlan {
       requireAccess: false,
     };
   }
+  features.annotation = {
+    plans: [{ plan: '*', test: Test.TEXTARR, value: ['text', 'video', 'audio'] }],
+    isInBeta: false,
+    requireAccess: false,
+  };
   return features;
 }
 
