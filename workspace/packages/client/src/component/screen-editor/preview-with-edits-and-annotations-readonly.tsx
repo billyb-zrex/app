@@ -51,6 +51,7 @@ import { applyFadeInTransitionToNode, applyUpdateDiff } from './utils/diffs/appl
 import { ApplyDiffAndGoToAnn, NavToAnnByRefIdFn } from './types';
 import { IAnnotationConfigWithScreenId } from '../annotation/annotation-config-utils';
 import { HighlighterBaseConfig } from '../base/hightligher-base';
+import { getDemoViewportHeight } from './demo-viewport';
 
 export interface IOwnProps {
   resizeSignal: number;
@@ -844,6 +845,8 @@ export default class ScreenPreviewWithEditsAndAnnotationsReadonly
       isScreenPreview={false}
       playMode={this.props.playMode}
       isResponsive={this.props.isResponsive}
+      viewportHeight={this.props.screen.type === ScreenType.SerDom
+        ? getDemoViewportHeight(this.props.tour.rid, this.props.screenData.vpd.h) : undefined}
       heightOffset={this.props.frameSetting !== FrameSettings.NOFRAME ? MAC_FRAME_HEIGHT : 0}
       borderColor={this.props.borderColor}
       onIframeClick={this.props.onIframeClick}
