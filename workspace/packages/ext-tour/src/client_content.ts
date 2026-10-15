@@ -84,7 +84,7 @@ function init() {
 
       case Msg.SAVE_STYLE_DATA: {
         console.log("[sd_rec]", 1);
-        styleData = message.data.cookiesData;
+        styleData = message.data.screenStyleData;
         styleDataReceived = true;
         break;
       }
@@ -129,3 +129,4 @@ function init() {
 }
 
 init();
+

@@ -23,7 +23,9 @@ function BuyMoreCredit({
   clickedFrom: 'header' | 'create-demo' | 'preview' | 'billing',
   title?: string,
   showIcon?: boolean
-}): JSX.Element {
+}): JSX.Element | null {
+  const billingEnabled = process.env.REACT_APP_SELF_HOSTED_CORE !== 'true'
+    && !!process.env.REACT_APP_CHARGEBEE_SITE;
   const [availableCredits, setAvailableCredits] = useState(0);
   const [isBuyMoreCreditInProcess, setIsBuyMoreCreditInProgress] = useState(false);
   const creditIntervalRef = useRef<null | NodeJS.Timeout>(null);
@@ -50,6 +52,7 @@ function BuyMoreCredit({
 
   useEffect(() => {
     setAvailableCredits(currentCredit);
+    if (!billingEnabled || typeof Chargebee === 'undefined') return;
     Chargebee.init({
       site: process.env.REACT_APP_CHARGEBEE_SITE,
     });
@@ -63,6 +66,7 @@ function BuyMoreCredit({
   }, []);
 
   const buyMoreCredit = (): void => {
+    if (!billingEnabled || typeof Chargebee === 'undefined') return;
     const cbInstance = Chargebee.getInstance();
     cbInstance.openCheckout({
       hostedPage() {
@@ -80,6 +84,8 @@ function BuyMoreCredit({
       step() { }
     });
   };
+
+  if (!billingEnabled) return null;
 
   return (
     <div

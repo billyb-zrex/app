@@ -11,6 +11,14 @@ import {
 } from '@fable/common/dist/api-contract';
 import { captureException } from '@sentry/react';
 
+export const signedUploadHeaders = (url: string, contentType: string): Record<string, string> => {
+  const headers: Record<string, string> = { 'Content-Type': contentType };
+  if (new URL(url).searchParams.get('x-amz-acl') === 'public-read') {
+    headers['x-amz-acl'] = 'public-read';
+  }
+  return headers;
+};
+
 export const getS3UploadUrl = async (type: string): Promise<{
   baseUrl: string;
   cdnUrl: string
@@ -38,7 +46,7 @@ export async function uploadMediaToAws(
   await fetch(awsSignedUrl.baseUrl, {
     method: 'PUT',
     body: mediaBuffer,
-    headers: { 'Content-Type': type },
+    headers: signedUploadHeaders(awsSignedUrl.baseUrl, type),
   });
   return awsSignedUrl;
 }
@@ -59,7 +67,7 @@ export async function uploadImageDataToAws(base64ImageData: string, type: 'image
   const res = await fetch(awsSignedUrl.baseUrl, {
     method: 'PUT',
     body: byteArray,
-    headers: { 'Content-Type': type },
+    headers: signedUploadHeaders(awsSignedUrl.baseUrl, type),
   });
 
   if (res.status === 200) {
@@ -81,7 +89,7 @@ export const uploadImageAsBinary = async (selectedImage: any, presignedUrls: {
       const res = await fetch(presignedUrls.baseUrl, {
         method: 'PUT',
         body: binaryData,
-        headers: { 'Content-Type': selectedImage.type },
+        headers: signedUploadHeaders(presignedUrls.baseUrl, selectedImage.type),
       });
 
       if (res.status === 200) {
@@ -162,3 +170,4 @@ export async function transcodeAudio(uri: string, cdnUrl: string, tourRid: strin
   }
   return ['', ...data.data];
 }
+

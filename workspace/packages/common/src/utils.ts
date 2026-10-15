@@ -601,7 +601,10 @@ export function compileValue(
   globalOpts : IGlobalConfig,
   path :typeof GlobalPropsPath[keyof typeof GlobalPropsPath]
 ): any {
-  const opts = { ...globalOpts };
+  const opts: Record<string, any> = { ...getSampleGlobalConfig() };
+  for (const [key, value] of Object.entries(globalOpts || {})) {
+    if (value !== undefined && value !== null) opts[key] = value;
+  }
   const keys : string[] = path.split('.').slice(1);
   return keys.reduce((acc, key) => acc[key], opts as any);
 }

@@ -1,3 +1,4 @@
+import ExportImport from '../../component/export-import';
 /* eslint-disable no-useless-escape */
 import { CaretRightOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { traceEvent } from '@fable/common/dist/amplitude';
@@ -759,6 +760,7 @@ class Tours extends React.PureComponent<IProps, IOwnStateProps> {
   };
 
   render(): ReactElement {
+    if (process.env.REACT_APP_SELF_HOSTED_CORE === 'true' && new URLSearchParams(window.location.search).get('restore') === '1') return <ExportImport />;
     const toursLoaded = this.props.allToursLoadingStatus === LoadingStatus.Done;
 
     return (

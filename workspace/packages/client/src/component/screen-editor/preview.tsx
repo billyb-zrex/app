@@ -29,6 +29,7 @@ export interface IOwnProps {
   isScreenPreview: boolean;
   playMode: boolean;
   isResponsive: boolean;
+  viewportHeight?: number;
   heightOffset: number;
   borderColor?: string;
   onIframeClick?: ()=>void;
@@ -167,7 +168,8 @@ export default class ScreenPreview extends React.PureComponent<IOwnProps, IOwnSt
       this.handleScreenResponsiveness();
     }
 
-    if (prevProps.isResponsive !== this.props.isResponsive) {
+    if (prevProps.isResponsive !== this.props.isResponsive
+      || prevProps.viewportHeight !== this.props.viewportHeight) {
       this.handleScreenResponsiveness();
     }
 
@@ -378,7 +380,8 @@ export default class ScreenPreview extends React.PureComponent<IOwnProps, IOwnSt
     if (!this.props.isResponsive) {
       // INFO for now we use a constant image scaling size of 1280 / 720 (with ratio 16:9)
       const vpdW = this.props.screen.type === ScreenType.SerDom ? this.props.screenData.vpd.w : 1280;
-      const vpdH = this.props.screen.type === ScreenType.SerDom ? this.props.screenData.vpd.h : 720;
+      const vpdH = this.props.screen.type === ScreenType.SerDom
+        ? (this.props.viewportHeight ?? this.props.screenData.vpd.h) : 720;
 
       const scaleX = (origFrameViewPort.width - shadowWidth) / vpdW;
       const scaleY = (origFrameViewPort.height - shadowHeight) / vpdH;

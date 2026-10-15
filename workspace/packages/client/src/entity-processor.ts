@@ -80,6 +80,7 @@ import { isLeadFormPresentInHTMLStr } from './component/annotation-rich-text-edi
 import { FeatureForPlan, FeaturePerPlan, PlanDetail } from './plans';
 import { getSerNodeFromPath } from './component/screen-editor/utils/edits';
 import { EMPTY_EL_PATH } from './constants';
+import { normalizeGlobalConfig } from './core-defaults';
 
 export function getNumberOfDaysFromNow(d: Date): [string, number] {
   const msDiffs = +d - +new Date();
@@ -271,6 +272,7 @@ export function processRawTourData(
   isForExportedTour: boolean = false,
   baseUrl: string = window.location.origin
 ): P_RespTour {
+  globalOpts = normalizeGlobalConfig(globalOpts);
   const d = new Date(tour.updatedAt);
 
   let tTour;
@@ -289,6 +291,7 @@ export function processRawTourData(
 
   return {
     ...tour,
+    globalOpts,
     info,
     createdAt: new Date(tour.createdAt),
     updatedAt: d,
@@ -381,7 +384,7 @@ export function compileValue(
   globalOpts: Object,
   path: string
 ): any {
-  const opts = { ...globalOpts };
+  const opts = normalizeGlobalConfig(globalOpts);
   const keys : string[] = path.split('.').slice(1);
   return keys.reduce((acc, key) => acc[key], opts as any);
 }
